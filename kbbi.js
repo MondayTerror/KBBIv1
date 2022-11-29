@@ -21,48 +21,44 @@ Itu nantinya akan kita ganti dengan fungsi inquirer
 const inquirer = require('inquirer');
 const fetch = require('node-fetch');
 
-// Block 1
+// Start from here
 inquirer.prompt([
   {
     type: 'input',
-    message: 'Search : ',
-    name: 'kbbi_query'
+    message: 'Cari afach? : ',
+    name: 'data_pencarian'
   }
 ]).then(a => {
+  // Clear console nya biar gak risih!
   console.clear();
-  if (!a.kbbi_query) {
+  // Lanjut ke code
+  if (!a.data_pencarian) {
     console.clear();
-    console.log(`ERROR : Kamu tidak input satu pun kata!`);
+    console.log('ERROR : Terjadi kesalahan, silahkan coba lagi..');
     process.exit();
   }
   else {
-    try {
-      fetch(`https://new-kbbi-api.herokuapp.com/cari/${a.kbbi_query}`).then(response => {
-        return response.json();
-      }).then(data => {
-        if (data.status == 'false') {
-          console.clear();
-          console.log('ERROR : Server tidak memberikan response balik!');
-          process.exit();
-        }
-        else {
-          try{
-            for(var i = 0; i < data.data[0].arti.length; i++) {
-              console.log(`[${i}] > Kelas kata : ${data.data[0].arti[i].kelas_kata}\n[${i}] > Deskripsi : ${data.data[0].arti[i].deskripsi}\n\n`);
-            }
+    fetch(`https://new-kbbi-api.herokuapp.com/cari/${a.data_pencarian}`).then(response => {
+      return response.json(); // akan kembali menjadi json data
+    }).then(data => {
+      if (data.status == 'false') {
+        console.clear();
+        console.log('ERROR : Terjadi kesalahan, silahkan coba lagi..');
+        process.exit();
+      }
+      else {
+        try {
+          for (var jancok = 0; jancok < data.data[0].arti.length; jancok++) {
+            console.log(`[${jancok}] Kelas kata : ${data.data[0].arti[jancok].kelas_kata}\n[${jancok}] Deskripsi : ${data.data[0].arti[jancok].deskripsi}\n\n`)
           }
-        catch(error) {
+        } catch (error) {
           console.clear();
-          console.log('ERROR : Terjadi kesalahan fatal, silahkan memulai ulang program!');
+          console.log('ERROR : Terjadi kesalahan, silahkan coba lagi..');
           process.exit();
         }
       }
-      })
-    }
-    catch(error) {
-      console.clear();
-      console.log('ERROR : Terjadi kesalahan fatal, silahkan memulai ulang program!');
-      process.exit();
-    }
+    })
   }
 })
+
+// Ok.. terimakasih udh mau lihat code yang useless ini
